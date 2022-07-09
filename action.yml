@@ -116,8 +116,8 @@ runs:
           data = file.read()
           data = data\
             .replace('org.love2d.android', '${{ inputs.bundle-id }}')\
-            .replace('11.4', '${{ inputs.version-string }}')\
             .replace('30', '${{ inputs.version-code }}')\
+            .replace('11.4', '${{ inputs.version-string }}')
           insert_pos = data.find('\n', data.find('proguardFiles')) + 1
           data = data[:insert_pos] + '            signingConfig signingConfigs.release\n' + data[insert_pos:]
           insert_pos = data.find('buildTypes') - 4
