@@ -1,4 +1,4 @@
-name: Love android
+name: Love actions for android
 description: "Android CI/CD for LÖVE based games"
 inputs:
   app-name:
