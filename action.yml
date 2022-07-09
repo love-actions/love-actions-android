@@ -1,0 +1,172 @@
+name: Love android
+description: "Android CI/CD for LÖVE based games"
+inputs:
+  app-name:
+    description: |
+      App display name
+      Would be used in app/src/main/AndroidManifest.xml
+    required: false
+    default: "LÖVE App"
+  bundle-id:
+    description: |
+      App bundle id
+      Would be used in app/build.gradle
+    required: false
+    default: "org.love2d.android"
+  icon-specifier:
+    description: |
+      Icon specifier
+      Would be used in app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+    required: false
+    default: "@mipmap/icon"
+  keystore-alias:
+    description: |
+      Keystore alias
+      Would be used to sign the app
+    required: false
+  keystore-base64:
+    description: |
+      Keystore base64 content
+      Would be used to sign the app
+    required: false
+  keystore-key-password:
+    description: |
+      Keystore key password
+      Would be used to sign the app
+    required: false
+  keystore-store-password:
+    description: |
+      Keystore store password
+      Would be used to sign the app
+      Usually the same as keystore-key-password
+    required: false
+  love-package:
+    description: |
+      Love package
+      Would be used in app/src/embed/assets/
+    required: false
+    default: "./game.love"
+  resource-path:
+    description: |
+      Path to the resources folder
+      Would copy all contents to app/src/main/res
+      Top folder not included
+    required: true
+  version-string:
+    description: |
+      App version string
+      Use 3 numbers seperated by dots
+      Looks like 3.2.1
+    required: false
+    default: "1.0.0"
+  version-code:
+    description: |
+      App version code
+      One number, usually the same as version string without dots
+      Looks like 321
+    required: false
+    default: "100"
+outputs:
+  package-paths:
+    description: "Paths to the built packages in an array"
+    value: ${{ steps.gather-packages.outputs.package-paths }}
+runs:
+  using: "composite"
+  steps:
+    - name: Get Java
+      uses: actions/setup-java@v2
+      with:
+        distribution: "adopt"
+        java-version: "11"
+    - name: Clone love-android
+      uses: actions/checkout@v3
+      with:
+        path: love-android
+        ref: "11.4"
+        repository: love2d/love-android
+        submodules: recursive
+    - name: Extract love package
+      shell: bash
+      run: |
+        7z x {{ inputs.love-package }} -o./love-android/app/src/embed/assets/
+    - name: Copy resources
+      shell: bash
+      run: |
+        cp -r -f ${{ inputs.resource-path }}/* ./love-android/app/src/main/res/
+    - name: Update android information
+      shell: python
+      run: |
+        with open('./love-android/app/src/main/AndroidManifest.xml', "r+", encoding='utf-8') as file:
+          data = file.read()
+          data = data\
+            .replace('LÖVE for Android', '${{ inputs.appName }}')\
+            .replace('@drawable/love', '${{ inputs.icon-specifier }}')
+          file.seek(0)
+          file.truncate()
+          file.write(data)
+        with open("./love-android/app/build.gradle", "r+", encoding='utf-8') as file:
+          data = file.read()
+          data = data\
+            .replace('org.love2d.android', '${{ inputs.bundle-id }}')\
+            .replace('11.4', '${{ inputs.version-string }}')\
+            .replace('30', '${{ inputs.version-code }}')\
+          insert_pos = data.find('\n', data.find('proguardFiles')) + 1
+          data = data[:insert_pos] + '            signingConfig signingConfigs.release\n' + data[insert_pos:]
+          insert_pos = data.find('buildTypes') - 4
+          data = data[:insert_pos] + "    signingConfigs {\n" \
+                                   "        release {\n" \
+                                   "            storeFile file('./android.keystore')\n" \
+                                   "            keyAlias '${{ inputs.keystore-alias }}'\n" \
+                                   "            keyPassword '${{ inputs.keystore-key-password }}'\n" \
+                                   "            storePassword '${{ inputs.keystore-store-password }}'\n" \
+                                   "        }\n" \
+                                   "    }\n" + data[insert_pos:]
+          file.seek(0)
+          file.truncate()
+          file.write(data)
+    - name: Cache gradle
+      uses: actions/cache@v3
+      with:
+        path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+        key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: gradle-
+    - name: Cache NDK
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/lib/android/sdk/ndk/21.3.6528147
+        key: ndk-21.3.6528147
+    - name: Cache Builds
+      uses: actions/cache@v3
+      with:
+        path: |
+          ./love-android/.gradle
+          ./love-android/love/build
+          ./love-android/app/build
+        key: build-love-11.4
+    - name: Build Techmino Galaxy (Release)
+      if: "${{ inputs.keystore-base64 != '' }}"
+      shell: bash
+      run: |
+        echo "${{ inputs.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > ./love-android/app/android.keystore
+        cd ./love-android/
+        chmod +x ./gradlew
+        ./gradlew assembleEmbedRecordRelease
+    - name: Rename APK (Release)
+      if: "${{ inputs.keystore-base64 != '' }}"
+      shell: bash
+      run: mv ./love-android/app/build/outputs/apk/embedRecord/release/app-embed-record-release.apk ${{ inputs.output }}
+    - name: Build Techmino Galaxy (Debug)
+      if: "${{ inputs.keystore-base64 == '' }}"
+      shell: bash
+      run: |
+        cd ./love-android/
+        chmod +x ./gradlew
+        ./gradlew assembleEmbedRecordDebug
+    - name: Rename APK (Debug)
+      if: "${{ inputs.keystore-base64 == '' }}"
+      shell: bash
+      run: |
+        ls -l ./love-android/app/build/outputs/apk/embedRecord/debug/
+        mv ./love-android/app/build/outputs/apk/embedRecord/debug/app-embed-record-debug.apk ${{ inputs.output }}
