@@ -96,7 +96,7 @@ runs:
     - name: Extract love package
       shell: bash
       run: |
-        7z x {{ inputs.love-package }} -o./love-android/app/src/embed/assets/
+        7z x ${{ inputs.love-package }} -o./love-android/app/src/embed/assets/
     - name: Copy resources
       shell: bash
       run: |
