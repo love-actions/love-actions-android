@@ -75,8 +75,9 @@ inputs:
 outputs:
   package-paths:
     description: |
-      Paths to the built packages in an array
-      Would be relative paths to the {output-folder}
+      Paths to the built packages in a bash list
+      Would be paths relative to repository root, seperated by spaces
+      Looks like: ./build/game.apk ./build/game.abb
     value: ${{ steps.gather-packages.outputs.package-paths }}
 runs:
   using: "composite"
@@ -157,6 +158,17 @@ runs:
       shell: bash
       run: |
         mkdir -p ${{ inputs.output-folder }}
+    - name: Build Techmino Galaxy (Debug)
+      shell: bash
+      run: |
+        cd ./love-android/
+        chmod +x ./gradlew
+        ./gradlew assembleEmbedRecordDebug
+    - name: Rename APK (Debug)
+      shell: bash
+      run: |
+        ls -l ./love-android/app/build/outputs/apk/embedRecord/debug/
+        mv ./love-android/app/build/outputs/apk/embedRecord/debug/app-embed-record-debug.apk ${{ inputs.output-folder }}
     - name: Build Techmino Galaxy (Release)
       if: "${{ inputs.keystore-base64 != '' }}"
       shell: bash
@@ -168,21 +180,9 @@ runs:
     - name: Rename APK (Release)
       if: "${{ inputs.keystore-base64 != '' }}"
       shell: bash
-      run: mv ./love-android/app/build/outputs/apk/embedRecord/release/app-embed-record-release.apk ${{ inputs.output-folder }}/
-    - name: Build Techmino Galaxy (Debug)
-      if: "${{ inputs.keystore-base64 == '' }}"
+      run: mv ./love-android/app/build/outputs/apk/embedRecord/release/app-embed-record-release.apk ${{ inputs.output-folder }}
+    - name: Gather packages in output folder
+      id: gather-packages
       shell: bash
       run: |
-        cd ./love-android/
-        chmod +x ./gradlew
-        ./gradlew assembleEmbedRecordDebug
-    - name: Rename APK (Debug)
-      if: "${{ inputs.keystore-base64 == '' }}"
-      shell: bash
-      run: |
-        ls -l ./love-android/app/build/outputs/apk/embedRecord/debug/
-        mv ./love-android/app/build/outputs/apk/embedRecord/debug/app-embed-record-debug.apk ${{ inputs.output-folder }}/
-    - name: List files in output folder
-      shell: bash
-      run: |
-        ls -l ${{ inputs.output-folder }}/
+        echo ::set-output name=package-paths::$(ls ${{ inputs.output-folder }})
