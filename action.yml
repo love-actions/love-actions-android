@@ -142,7 +142,7 @@ runs:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-        key: gradle-${{ hashFiles("**/gradle-wrapper.properties") }}
+        key: gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
         restore-keys: gradle-
     - name: Cache NDK
       uses: actions/cache@v3
