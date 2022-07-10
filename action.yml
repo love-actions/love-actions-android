@@ -1,8 +1,8 @@
 name: Love actions for android
-description: "Android CI/CD for LÖVE based games"
+description: Android CI/CD for LÖVE based games
 branding:
-  icon: 'heart'
-  color: 'green'
+  icon: "heart"
+  color: "green"
 inputs:
   app-name:
     description: |
@@ -83,12 +83,12 @@ outputs:
       Looks like: ./build/game.apk ./build/game.abb
     value: ${{ steps.gather-packages.outputs.package-paths }}
 runs:
-  using: "composite"
+  using: composite
   steps:
     - name: Get Java
       uses: actions/setup-java@v2
       with:
-        distribution: "adopt"
+        distribution: adopt
         java-version: "11"
     - name: Clone love-android
       uses: actions/checkout@v3
@@ -108,23 +108,23 @@ runs:
     - name: Update android information
       shell: python
       run: |
-        with open('./love-android/app/src/main/AndroidManifest.xml', "r+", encoding='utf-8') as file:
+        with open("./love-android/app/src/main/AndroidManifest.xml", "r+", encoding="utf-8") as file:
           data = file.read()
           data = data\
-            .replace('LÖVE for Android', '${{ inputs.app-name }}')\
-            .replace('@drawable/love', '${{ inputs.icon-specifier }}')
+            .replace("LÖVE for Android", "${{ inputs.app-name }}")\
+            .replace("@drawable/love", "${{ inputs.icon-specifier }}")
           file.seek(0)
           file.truncate()
           file.write(data)
-        with open("./love-android/app/build.gradle", "r+", encoding='utf-8') as file:
+        with open("./love-android/app/build.gradle", "r+", encoding="utf-8") as file:
           data = file.read()
           data = data\
-            .replace('org.love2d.android', '${{ inputs.bundle-id }}')\
-            .replace('30', '${{ inputs.version-code }}')\
-            .replace('11.4', '${{ inputs.version-string }}')
-          insert_pos = data.find('\n', data.find('proguardFiles')) + 1
-          data = data[:insert_pos] + '            signingConfig signingConfigs.release\n' + data[insert_pos:]
-          insert_pos = data.find('buildTypes') - 4
+            .replace("org.love2d.android", "${{ inputs.bundle-id }}")\
+            .replace("30", "${{ inputs.version-code }}")\
+            .replace("11.4", "${{ inputs.version-string }}")
+          insert_pos = data.find("\n", data.find("proguardFiles")) + 1
+          data = data[:insert_pos] + "            signingConfig signingConfigs.release\n" + data[insert_pos:]
+          insert_pos = data.find("buildTypes") - 4
           data = data[:insert_pos] + "    signingConfigs {\n" \
                                    "        release {\n" \
                                    "            storeFile file('./android.keystore')\n" \
@@ -142,7 +142,7 @@ runs:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-        key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        key: gradle-${{ hashFiles("**/gradle-wrapper.properties") }}
         restore-keys: gradle-
     - name: Cache NDK
       uses: actions/cache@v3
