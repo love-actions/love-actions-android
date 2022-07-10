@@ -167,10 +167,9 @@ runs:
     - name: Rename APK (Debug)
       shell: bash
       run: |
-        ls -l ./love-android/app/build/outputs/apk/embedRecord/debug/
         mv ./love-android/app/build/outputs/apk/embedRecord/debug/app-embed-record-debug.apk ${{ inputs.output-folder }}
     - name: Build Techmino Galaxy (Release)
-      if: "${{ inputs.keystore-base64 != '' }}"
+      if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
       run: |
         echo "${{ inputs.keystore-base64 }}" | base64 -d > ./love-android/app/android.keystore
@@ -178,7 +177,7 @@ runs:
         chmod +x ./gradlew
         ./gradlew assembleEmbedRecordRelease
     - name: Rename APK (Release)
-      if: "${{ inputs.keystore-base64 != '' }}"
+      if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
       run: mv ./love-android/app/build/outputs/apk/embedRecord/release/app-embed-record-release.apk ${{ inputs.output-folder }}
     - name: Gather packages in output folder
