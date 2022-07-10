@@ -1,5 +1,8 @@
 name: Love actions for android
 description: "Android CI/CD for LÖVE based games"
+branding:
+  icon: 'heart'
+  color: 'green'
 inputs:
   app-name:
     description: |
