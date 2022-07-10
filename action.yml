@@ -111,7 +111,7 @@ runs:
         with open('./love-android/app/src/main/AndroidManifest.xml', "r+", encoding='utf-8') as file:
           data = file.read()
           data = data\
-            .replace('LÖVE for Android', '${{ inputs.appName }}')\
+            .replace('LÖVE for Android', '${{ inputs.app-name }}')\
             .replace('@drawable/love', '${{ inputs.icon-specifier }}')
           file.seek(0)
           file.truncate()
