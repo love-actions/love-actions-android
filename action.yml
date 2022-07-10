@@ -187,4 +187,4 @@ runs:
       id: gather-packages
       shell: bash
       run: |
-        echo ::set-output name=package-paths::$(ls ${{ inputs.output-folder }})
+        echo ::set-output name=package-paths::$(ls -d ${{ inputs.output-folder }}/*)
