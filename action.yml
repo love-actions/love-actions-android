@@ -76,7 +76,7 @@ outputs:
   package-paths:
     description: |
       Paths to the built packages in a bash list
-      Would be paths relative to repository root, seperated by spaces
+      Would be paths relative to repository root, separated by spaces
       Looks like: ./build/game.apk ./build/game.abb
     value: ${{ steps.gather-packages.outputs.package-paths }}
 runs:
