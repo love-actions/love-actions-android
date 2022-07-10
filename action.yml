@@ -157,7 +157,7 @@ runs:
       if: "${{ inputs.keystore-base64 != '' }}"
       shell: bash
       run: |
-        echo "${{ inputs.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > ./love-android/app/android.keystore
+        echo "${{ inputs.keystore-base64 }}" | base64 -d > ./love-android/app/android.keystore
         cd ./love-android/
         chmod +x ./gradlew
         ./gradlew assembleEmbedRecordRelease
