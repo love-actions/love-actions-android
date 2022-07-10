@@ -16,7 +16,7 @@ inputs:
   icon-specifier:
     description: |
       Icon specifier
-      Would be used in app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+      Would be used in app/src/main/AndroidManifest.xml
     required: false
     default: "@mipmap/icon"
   keystore-alias:
@@ -71,7 +71,7 @@ inputs:
       Packages output folder
       All packages would be placed here
     required: false
-    default: "./build/"
+    default: "./build"
 outputs:
   package-paths:
     description: |
@@ -153,6 +153,10 @@ runs:
           ./love-android/love/build
           ./love-android/app/build
         key: build-love-11.4
+    - name: Ensure output folder
+      shell: bash
+      run: |
+        mkdir -p ${{ inputs.output-folder }}
     - name: Build Techmino Galaxy (Release)
       if: "${{ inputs.keystore-base64 != '' }}"
       shell: bash
