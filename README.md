@@ -9,13 +9,14 @@ Github Action for building & deploying Android `.apk` and `.abb` packages of a [
 See related actions below:
 
 [Love actions bare package](https://github.com/marketplace/actions/love-actions-bare-package)
+[Love actions for testing](https://github.com/marketplace/actions/love-actions-for-testing)
 
 ## Quick example
 
 ```yaml
 - name: Build love android
   id: build-love
-  uses: 26F-Studio/love-actions-android@v0.0.8-alpha
+  uses: 26F-Studio/love-actions-android@main
   with:
     app-name: "My Love Game"
     bundle-id: "org.love2d.my_game"
