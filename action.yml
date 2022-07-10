@@ -49,6 +49,12 @@ inputs:
       Would be used in app/src/embed/assets/
     required: false
     default: "./game.love"
+  product-name:
+    description: |
+      Base name of the package
+      Would be used to rename products 
+    required: false
+    default: "love-app"
   resource-path:
     description: |
       Path to the resources folder
@@ -170,7 +176,7 @@ runs:
     - name: Rename APK (Debug)
       shell: bash
       run: |
-        mv ./love-android/app/build/outputs/apk/embedRecord/debug/app-embed-record-debug.apk ${{ inputs.output-folder }}
+        mv ./love-android/app/build/outputs/apk/embedRecord/debug/app-embed-record-debug.apk ${{ inputs.output-folder }}/${{ inputs.product-name }}-debug.apk
     - name: Build Techmino Galaxy (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
@@ -182,7 +188,7 @@ runs:
     - name: Rename APK (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
-      run: mv ./love-android/app/build/outputs/apk/embedRecord/release/app-embed-record-release.apk ${{ inputs.output-folder }}
+      run: mv ./love-android/app/build/outputs/apk/embedRecord/release/app-embed-record-release.apk ${{ inputs.output-folder }}/${{ inputs.product-name }}-release.apk
     - name: Gather packages in output folder
       id: gather-packages
       shell: bash
