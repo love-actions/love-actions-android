@@ -63,4 +63,4 @@ See related actions below:
 
 | Name            | Example                                                      | Description                                                  |
 | :-------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `package-paths` | `./build/app-embed-record-debug.apk ./build/app-embed-record-release.apk` | built packages' paths in a bash-style list relative to the repository root, separated by spaces |
+| `package-paths` | `./build/my-game-debug.apk ./build/my-game-release.apk` | built packages' paths in a bash-style list relative to the repository root, separated by spaces |
