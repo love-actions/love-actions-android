@@ -1,4 +1,4 @@
-name: Love actions for android
+name: Love actions for Android
 description: Android CI/CD for LÖVE based games
 branding:
   icon: "heart"
@@ -9,7 +9,7 @@ inputs:
       App display name
       Would be used in app/src/main/AndroidManifest.xml
     required: false
-    default: "LÖVE App"
+    default: "LÖVE for Android"
   bundle-id:
     description: |
       App bundle id
@@ -21,7 +21,7 @@ inputs:
       Icon specifier
       Would be used in app/src/main/AndroidManifest.xml
     required: false
-    default: "@mipmap/icon"
+    default: "@drawable/love"
   keystore-alias:
     description: |
       Keystore alias
@@ -52,7 +52,7 @@ inputs:
   product-name:
     description: |
       Base name of the package
-      Would be used to rename products 
+      Would be used to rename products
     required: false
     default: "love-app"
   resource-path:
@@ -67,14 +67,14 @@ inputs:
       Use 3 numbers seperated by dots
       Looks like 3.2.1
     required: false
-    default: "1.0.0"
+    default: "11.4"
   version-code:
     description: |
       App version code
       One number, usually the same as version string without dots
       Looks like 321
     required: false
-    default: "100"
+    default: "30"
   output-folder:
     description: |
       Packages output folder
@@ -167,17 +167,17 @@ runs:
       shell: bash
       run: |
         mkdir -p ${{ inputs.output-folder }}
-    - name: Build Techmino Galaxy (Debug)
+    - name: Build package (Debug)
       shell: bash
       run: |
         cd ./love-android/
         chmod +x ./gradlew
         ./gradlew assembleEmbedRecordDebug
-    - name: Rename APK (Debug)
+    - name: Rename package (Debug)
       shell: bash
       run: |
         mv ./love-android/app/build/outputs/apk/embedRecord/debug/app-embed-record-debug.apk ${{ inputs.output-folder }}/${{ inputs.product-name }}-debug.apk
-    - name: Build Techmino Galaxy (Release)
+    - name: Build package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
       run: |
@@ -185,7 +185,7 @@ runs:
         cd ./love-android/
         chmod +x ./gradlew
         ./gradlew assembleEmbedRecordRelease
-    - name: Rename APK (Release)
+    - name: Rename package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
       run: mv ./love-android/app/build/outputs/apk/embedRecord/release/app-embed-record-release.apk ${{ inputs.output-folder }}/${{ inputs.product-name }}-release.apk
