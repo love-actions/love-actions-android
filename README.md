@@ -45,22 +45,22 @@ See related actions below:
 
 | Name                      | Required | Default                | Description                                                  |
 | :------------------------ | -------- | ---------------------- | ------------------------------------------------------------ |
-| `app-name`                | `false`  | `"LÖVE for Android"`   | App display name, used in `app/src/main/AndroidManifest.xml` |
-| `bundle-id`               | `false`  | `"org.love2d.android"` | App bundle id, used in `app/build.gradle`                    |
-| `icon-specifier`          | `false`  | `"@drawable/love"`     | App icon specifier used in `app/src/main/AndroidManifest.xml` |
-| `keystore-alias`          | `false`  | `""`                   | Signing keystore's alias, won't build release packages if not specified |
-| `keystore-base64`         | `false`  | `""`                   | Signing keystore's content in `base64` string, won't build release packages if not specified |
-| `keystore-key-password`   | `false`  | `""`                   | Signing keystore's key password, won't build release packages if not specified |
-| `keystore-store-password` | `false`  | `""`                   | Signing keystore's store password, won't build release packages if not specified |
+| `app-name`                | `false`  | `"LÖVE for Android"`   | App display name. Used in `app/src/main/AndroidManifest.xml` |
+| `bundle-id`               | `false`  | `"org.love2d.android"` | App bundle id. Used in `app/build.gradle`                    |
+| `icon-specifier`          | `false`  | `"@drawable/love"`     | App icon specifier. Used in `app/src/main/AndroidManifest.xml` |
+| `keystore-alias`          | `false`  | `""`                   | Signing keystore's alias. Won't build release packages if not specified |
+| `keystore-base64`         | `false`  | `""`                   | Signing keystore's content in `base64` string. Won't build release packages if not specified |
+| `keystore-key-password`   | `false`  | `""`                   | Signing keystore's key password. Won't build release packages if not specified |
+| `keystore-store-password` | `false`  | `""`                   | Signing keystore's store password. Won't build release packages if not specified |
 | `love-package`            | `false`  | `"./game.love"`        | `.love` game package file path                               |
 | `product-name`            | `false`  | `"love-app"`           | Base name of the package. Used to rename products            |
-| `resource-path`           | `true`   | `""`                   | Path to the android resources folder, would copy all contents to `app/src/main/res` exclude top folder |
-| `version-string`          | `false`  | `"11.4"`               | App version string no more than 3 numbers, used in `app/build.gradle` |
-| `version-code`            | `false`  | `"30"`                 | Numeric app version code , used in `app/build.gradle`        |
+| `resource-path`           | `true`   | `""`                   | Path to the android resources folder. Would copy all contents to `app/src/main/res` exclude top folder |
+| `version-string`          | `false`  | `"11.4"`               | App version string no more than 3 numbers. Used in `app/build.gradle` |
+| `version-code`            | `false`  | `"30"`                 | Numeric app version code . Used in `app/build.gradle`        |
 | `output-folder`           | `false`  | `"./build"`            | Built packages output folder                                 |
 
 ## All outputs
 
-| Name            | Example                                                      | Description                                                  |
-| :-------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `package-paths` | `./build/my-game-debug.apk ./build/my-game-release.apk` | built packages' paths in a bash-style list relative to the repository root, separated by spaces |
+| Name            | Example                                                 | Description                                                  |
+| :-------------- | ------------------------------------------------------- | ------------------------------------------------------------ |
+| `package-paths` | `./build/my-game-debug.apk ./build/my-game-release.apk` | Built packages' paths in a bash-style list relative to the repository root, separated by spaces |
