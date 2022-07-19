@@ -46,7 +46,7 @@ inputs:
   love-package:
     description: |
       Love package
-      Would be used in app/src/embed/assets/
+      Would be added to app/src/embed/assets/
     required: false
     default: "./game.love"
   product-name:
@@ -61,6 +61,18 @@ inputs:
       Would copy all contents to app/src/main/res
       Top folder not included
     required: true
+  libs-path:
+    description: |
+      Path to the libs folder
+      Would copy all contents to app/libs
+      Top folder not included
+    required: false
+  extra-assets:
+    description: |
+      List of folder & file paths to be added to app/src/embed/assets/
+      Don't need global quotes, separated by spaces
+      Looks like: ./assets/ ./logics/ ./main.lua ./config.lua
+    required: false
   version-string:
     description: |
       App version string
@@ -137,16 +149,35 @@ runs:
           data = data[:insert_pos] + "            signingConfig signingConfigs.release\n" + data[insert_pos:]
           insert_pos = data.find("buildTypes") - 4
           data = data[:insert_pos] + "    signingConfigs {\n" \
-                                   "        release {\n" \
-                                   "            storeFile file('./android.keystore')\n" \
-                                   "            keyAlias '${{ inputs.keystore-alias }}'\n" \
-                                   "            keyPassword '${{ inputs.keystore-key-password }}'\n" \
-                                   "            storePassword '${{ inputs.keystore-store-password }}'\n" \
-                                   "        }\n" \
-                                   "    }\n" + data[insert_pos:]
+                                     "        release {\n" \
+                                     "            storeFile file('./android.keystore')\n" \
+                                     "            keyAlias '${{ inputs.keystore-alias }}'\n" \
+                                     "            keyPassword '${{ inputs.keystore-key-password }}'\n" \
+                                     "            storePassword '${{ inputs.keystore-store-password }}'\n" \
+                                     "        }\n" \
+                                     "    }\n" + data[insert_pos:]
+          if "${{ inputs.libs-path }}":
+            print("Adding app/libs to build phases...")
+            insert_pos = data.find("buildTypes") - 4
+            data = data[:insert_pos] + "    sourceSets {\n" \
+                                       "        main {\n" \
+                                       "            jniLibs.srcDir(['libs'])\n" \
+                                       "        }\n" \
+                                       "    }\n" + data[insert_pos:]
           file.seek(0)
           file.truncate()
           file.write(data)
+    - name: Add libs
+      if: "${{ inputs.libs-path != '' }}"
+      shell: shell
+      run: |
+        mkdir -p ./love-actions-android/love-android/app/libs/
+        cp -r -f ${{ inputs.libs-path }}/* ./love-actions-android/love-android/app/libs/
+    - name: Add extra assets
+      if: "${{ inputs.extra-assets != '' }}"
+      shell: shell
+      run: |
+        cp -r -f ${{ inputs.extra-assets }} ./love-actions-android/love-android/app/src/embed/assets/
     - name: Cache gradle
       uses: actions/cache@v3
       with:
