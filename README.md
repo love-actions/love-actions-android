@@ -36,10 +36,10 @@ See related actions below:
     keystore-key-password: ${{ secrets.ANDROID_KEYSTORE_KEYPASSWORD }}
     keystore-store-password: ${{ secrets.ANDROID_KEYSTORE_STOREPASSWORD }}
     love-package: "./game.love"
-    product-name: "my-game"
     resource-path: "./assets/android/res"
     libs-path: "./assets/android/libs"
     extra-assets: ./README.md ./license.txt
+    product-name: "my-game"
     version-string: "2.3.4"
     version-code: 234
     output-folder: "./dist"
@@ -57,10 +57,10 @@ See related actions below:
 | `keystore-key-password`   | `false`  | `""`                   | Signing keystore's key password. Won't build release packages if not specified |
 | `keystore-store-password` | `false`  | `""`                   | Signing keystore's store password. Won't build release packages if not specified |
 | `love-package`            | `false`  | `"./game.love"`        | `.love` game package file path                               |
-| `product-name`            | `false`  | `"love-app"`           | Base name of the package. Used to rename products            |
 | `resource-path`           | `true`   | `""`                   | Path to the android resources folder. Would copy all contents to `app/src/main/res` excluding top folder |
 | `libs-path`               | `false`  | `""`                   | Path to the JNI libraries folder. Would copy all contents to `app/libs` excluding top folder |
 | `extra-assets`            | `false`  | `""`                   | List of folder & file paths to be added to `app/src/embed/assets/`. Separated by spaces |
+| `product-name`            | `false`  | `"love-app"`           | Base name of the package. Used to rename products            |
 | `version-string`          | `false`  | `"11.4"`               | App version string no more than 3 numbers. Used in `app/build.gradle` |
 | `version-code`            | `false`  | `"30"`                 | Numeric app version code . Used in `app/build.gradle`        |
 | `output-folder`           | `false`  | `"./build"`            | Built packages output folder                                 |
