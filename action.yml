@@ -169,13 +169,13 @@ runs:
           file.write(data)
     - name: Add libs
       if: "${{ inputs.libs-path != '' }}"
-      shell: shell
+      shell: bash
       run: |
         mkdir -p ./love-actions-android/love-android/app/libs/
         cp -r -f ${{ inputs.libs-path }}/* ./love-actions-android/love-android/app/libs/
     - name: Add extra assets
       if: "${{ inputs.extra-assets != '' }}"
-      shell: shell
+      shell: bash
       run: |
         cp -r -f ${{ inputs.extra-assets }} ./love-actions-android/love-android/app/src/embed/assets/
     - name: Cache gradle
