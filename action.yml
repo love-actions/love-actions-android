@@ -49,12 +49,6 @@ inputs:
       Would be added to app/src/embed/assets/
     required: false
     default: "./game.love"
-  product-name:
-    description: |
-      Base name of the package
-      Would be used to rename products
-    required: false
-    default: "love-app"
   resource-path:
     description: |
       Path to the resources folder
@@ -73,6 +67,12 @@ inputs:
       Don't need global quotes, separated by spaces
       Looks like: ./assets/ ./logics/ ./main.lua ./config.lua
     required: false
+  product-name:
+    description: |
+      Base name of the package
+      Would be used to rename products
+    required: false
+    default: "love-app"
   version-string:
     description: |
       App version string
