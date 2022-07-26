@@ -16,32 +16,29 @@ inputs:
       Would be used in app/build.gradle
     required: false
     default: "org.love2d.android"
+  resource-path:
+    description: |
+      Path to the resources folder
+      Would copy all contents to app/src/main/res
+      Top folder not included
+    required: true
   icon-specifier:
     description: |
       Icon specifier
       Would be used in app/src/main/AndroidManifest.xml
     required: false
     default: "@drawable/love"
-  keystore-alias:
+  love-ref:
     description: |
-      Keystore alias
-      Would be used to sign the app
+      LÖVE git ref
+      Could be commit hash, tags or branch name
     required: false
-  keystore-base64:
+    default: "11.4"
+  love-patch:
     description: |
-      Keystore base64 content
-      Would be used to sign the app
-    required: false
-  keystore-key-password:
-    description: |
-      Keystore key password
-      Would be used to sign the app
-    required: false
-  keystore-store-password:
-    description: |
-      Keystore store password
-      Would be used to sign the app
-      Usually the same as keystore-key-password
+      Git patch file path for the LÖVE repo
+      The patch must start from `love-ref`
+      You can use `git diff` to get the patch file
     required: false
   love-package:
     description: |
@@ -49,12 +46,6 @@ inputs:
       Would be added to app/src/embed/assets/
     required: false
     default: "./game.love"
-  resource-path:
-    description: |
-      Path to the resources folder
-      Would copy all contents to app/src/main/res
-      Top folder not included
-    required: true
   libs-path:
     description: |
       Path to the libs folder
@@ -93,6 +84,27 @@ inputs:
       All packages would be placed here
     required: false
     default: "./build"
+  keystore-alias:
+    description: |
+      Keystore alias
+      Would be used to sign the app
+    required: false
+  keystore-base64:
+    description: |
+      Keystore base64 content
+      Would be used to sign the app
+    required: false
+  keystore-key-password:
+    description: |
+      Keystore key password
+      Would be used to sign the app
+    required: false
+  keystore-store-password:
+    description: |
+      Keystore store password
+      Would be used to sign the app
+      Usually the same as keystore-key-password
+    required: false
 outputs:
   package-paths:
     description: |
@@ -113,13 +125,20 @@ runs:
       with:
         distribution: adopt
         java-version: "11"
-    - name: Clone love-android
+    - name: Checkout love-android
       uses: actions/checkout@v3
       with:
         path: ./love-actions-android/love-android
-        ref: "11.4"
+        ref: ${{ inputs.love-ref }}
         repository: love2d/love-android
         submodules: recursive
+    - name: Apply love-android patch
+      if: "${{ inputs.love-patch != '' }}"
+      shell: bash
+      run: |
+        cp ${{ inputs.love-patch }} ./love-actions-android/love-android/love.patch
+        cd ./love-actions-android/love-android
+        git apply ./love.patch
     - name: Extract love package
       shell: bash
       run: |
