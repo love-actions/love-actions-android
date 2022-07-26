@@ -139,14 +139,25 @@ runs:
         cp ${{ inputs.love-patch }} ./love-actions-android/love-android/love.patch
         cd ./love-actions-android/love-android
         git apply ./love.patch
-    - name: Extract love package
-      shell: bash
-      run: |
-        7z x ${{ inputs.love-package }} -o./love-actions-android/love-android/app/src/embed/assets/
     - name: Copy resources
       shell: bash
       run: |
         cp -r -f ${{ inputs.resource-path }}/* ./love-actions-android/love-android/app/src/main/res/
+    - name: Extract love package
+      shell: bash
+      run: |
+        7z x ${{ inputs.love-package }} -o./love-actions-android/love-android/app/src/embed/assets/
+    - name: Add libs
+      if: "${{ inputs.libs-path != '' }}"
+      shell: bash
+      run: |
+        mkdir -p ./love-actions-android/love-android/app/libs/
+        cp -r -f ${{ inputs.libs-path }}/* ./love-actions-android/love-android/app/libs/
+    - name: Add extra assets
+      if: "${{ inputs.extra-assets != '' }}"
+      shell: bash
+      run: |
+        cp -r -f ${{ inputs.extra-assets }} ./love-actions-android/love-android/app/src/embed/assets/
     - name: Update android information
       shell: python
       run: |
@@ -186,17 +197,6 @@ runs:
           file.seek(0)
           file.truncate()
           file.write(data)
-    - name: Add libs
-      if: "${{ inputs.libs-path != '' }}"
-      shell: bash
-      run: |
-        mkdir -p ./love-actions-android/love-android/app/libs/
-        cp -r -f ${{ inputs.libs-path }}/* ./love-actions-android/love-android/app/libs/
-    - name: Add extra assets
-      if: "${{ inputs.extra-assets != '' }}"
-      shell: bash
-      run: |
-        cp -r -f ${{ inputs.extra-assets }} ./love-actions-android/love-android/app/src/embed/assets/
     - name: Cache gradle
       uses: actions/cache@v3
       with:
