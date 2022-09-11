@@ -164,6 +164,8 @@ runs:
         with open("./love-actions-android/love-android/app/src/main/AndroidManifest.xml", "r+", encoding="utf-8") as file:
           data = file.read()
           data = data\
+            .replace("OpenGL ES 2.0", "OpenGL ES 3.0")\
+            .replace("0x00020000", "0x00030000")\
             .replace("LÖVE for Android", "${{ inputs.app-name }}")\
             .replace("@drawable/love", "${{ inputs.icon-specifier }}")
           file.seek(0)
