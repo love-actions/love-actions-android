@@ -246,7 +246,7 @@ runs:
       id: gather-packages
       shell: bash
       run: |
-        echo "package-paths=$(ls -d ${{ inputs.output-folder }}/*)" >> $GITHUB_OUTPUT
+        echo "package-paths=$(ls -d ${{ inputs.output-folder }}/* | tr '\r\n' ' ')" >> $GITHUB_OUTPUT
     - name: Cleanup
       shell: bash
       run: |
