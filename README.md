@@ -48,6 +48,100 @@ See related actions below:
     keystore-store-password: ${{ secrets.ANDROID_KEYSTORE_STOREPASSWORD }}
 ```
 
+## With [Love actions bare package](https://github.com/marketplace/actions/love-actions-bare-package) and [Love actions for testing](https://github.com/marketplace/actions/love-actions-for-testing)
+
+```yml
+env:
+  BUILD_TYPE: ${{ fromJSON('["dev", "release"]')[startsWith(github.ref, 'refs/tags/v')] }}
+  CORE_LOVE_PACKAGE_PATH: ./core.love
+  CORE_LOVE_ARTIFACT_NAME: core_love_package
+  PRODUCT_NAME: my_love_app
+  BUNDLE_ID: com.example.myloveapp
+
+jobs:
+  build-core:
+    runs-on: ubuntu-latest
+    env:
+      OUTPUT_FOLDER: ./build
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Build core love package
+        uses: love-actions/love-actions-core@v1
+        with:
+          build-list: ./media/ ./parts/ ./Zframework/ ./conf.lua ./main.lua ./version.lua
+          package-path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
+      - name: Upload core love package
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.CORE_LOVE_ARTIFACT_NAME }}
+          path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
+  auto-test:
+    runs-on: ubuntu-latest
+    needs: build-core
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Love actions for testing
+        uses: love-actions/love-actions-test@v1
+        with:
+          font-path: ./parts/fonts/proportional.otf
+          language-folder: ./parts/language
+  build-android:
+    runs-on: ubuntu-latest
+    needs: [build-core, auto-test]
+    env:
+      OUTPUT_FOLDER: ./build
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      # Download your core love package here
+      - name: Download core love package
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.CORE_LOVE_ARTIFACT_NAME }}
+      # This is an example dynamic library
+      - name: Download ColdClear
+        uses: ./.github/actions/get-cc
+        with:
+          platform: Android
+          dir: ./ColdClear
+      - name: Process ColdClear
+        shell: bash
+        run: |
+          mkdir -p ./libAndroid/armeabi-v7a/
+          mkdir -p ./libAndroid/arm64-v8a/
+          mv ./ColdClear/armeabi-v7a/libCCloader.so ./libAndroid/armeabi-v7a/
+          mv ./ColdClear/arm64-v8a/libCCloader.so ./libAndroid/arm64-v8a/
+      - name: Build Android packages
+        id: build-packages
+        uses: love-actions/love-actions-android@v1
+        with:
+          app-name: ${{ env.PRODUCT_NAME }}
+          bundle-id: ${{ env.BUNDLE_ID }}
+          icon-specifier: "@mipmap/icon"
+          keystore-alias: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
+          keystore-base64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          keystore-key-password: ${{ secrets.ANDROID_KEYSTORE_KEYPASSWORD }}
+          keystore-store-password: ${{ secrets.ANDROID_KEYSTORE_STOREPASSWORD }}
+          love-package: ${{ env.CORE_LOVE_PACKAGE_PATH }}
+          resource-path: ./.github/build/android/${{ env.BUILD_TYPE }}/res
+          libs-path: ./ColdClear/
+          extra-assets: ./libAndroid/
+          product-name: ${{ env.PRODUCT_NAME }}
+          version-string: 1.0.0
+          version-code: 100
+          output-folder: ${{ env.OUTPUT_FOLDER }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ needs.get-info.outputs.base-name }}_Android_release
+          path: ${{ env.OUTPUT_FOLDER }}/${{ steps.process-app-name.outputs.product-name }}-release.apk
+```
+
 ## All inputs
 
 | Name                        | Required  | Default                  | Description                                                                                                                                                |
