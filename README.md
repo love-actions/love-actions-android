@@ -132,14 +132,14 @@ jobs:
           libs-path: ./ColdClear/
           extra-assets: ./libAndroid/
           product-name: ${{ env.PRODUCT_NAME }}
-          version-string: 1.0.0
+          version-string: "1.0.0"
           version-code: 100
           output-folder: ${{ env.OUTPUT_FOLDER }}
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ needs.get-info.outputs.base-name }}_Android_release
-          path: ${{ env.OUTPUT_FOLDER }}/${{ steps.process-app-name.outputs.product-name }}-release.apk
+          path: ${{ env.OUTPUT_FOLDER }}/${{ env.PRODUCT_NAME }}-release.apk
 ```
 
 ## All inputs
