@@ -58,6 +58,11 @@ inputs:
       Don't need global quotes, separated by spaces
       Looks like: ./assets/ ./logics/ ./main.lua ./config.lua
     required: false
+  custom-scheme:
+    description: |
+      Custom URL scheme, looks like "demo_scheme://demo_host"
+      Would be used in app/src/main/AndroidManifest.xml
+    required: false
   product-name:
     description: |
       Base name of the package
@@ -161,6 +166,8 @@ runs:
     - name: Update android information
       shell: python
       run: |
+        scheme = "${{ inputs.custom-scheme }}".split("://")[0]
+        host = "${{ inputs.custom-scheme }}".split("://")[1]
         with open("./love-actions-android/love-android/app/src/main/AndroidManifest.xml", "r+", encoding="utf-8") as file:
           data = file.read()
           data = data\
@@ -168,6 +175,14 @@ runs:
             .replace("0x00020000", "0x00030000")\
             .replace("LÖVE for Android", "${{ inputs.app-name }}")\
             .replace("@drawable/love", "${{ inputs.icon-specifier }}")
+          if scheme != "" and host != "":
+            data = data[:data.rfind("</intent-filter>") + 16] + '''
+            \t\t<intent-filter>
+            \t\t    <action android:name="android.intent.action.VIEW" />
+            \t\t    <category android:name="android.intent.category.DEFAULT" />
+            \t\t    <category android:name="android.intent.category.BROWSABLE" />
+            \t\t    <data android:scheme="''' + scheme + '''" android:host="''' + host + '''" />
+            \t\t</intent-filter>''' + data[data.rfind("</intent-filter>") + 16:]
           file.seek(0)
           file.truncate()
           file.write(data)
