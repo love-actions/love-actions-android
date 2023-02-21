@@ -75,7 +75,7 @@ inputs:
       Use 3 numbers seperated by dots
       Looks like 3.2.1
     required: false
-    default: "11.4"
+    default: "0b0ff5551fae8b2079749481cd2b54adbbb25bd9"
   version-code:
     description: |
       App version code
