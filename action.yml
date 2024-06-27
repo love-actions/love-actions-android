@@ -224,8 +224,9 @@ runs:
         key: ndk-21.3.6528147
     - uses: burrunan/gradle-cache-action@v1
       name: Build package (Debug)
-      arguments: assembleEmbedRecordDebug
-      build-root-directory: love-actions-android/love-android
+      with:
+        arguments: assembleEmbedRecordDebug
+        build-root-directory: love-actions-android/love-android
     - name: Rename package (Debug)
       shell: bash
       run: |
@@ -238,8 +239,9 @@ runs:
     - use: burrunan/gradle-cache-action@v1
       name: Build package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
-      arguments: assembleEmbedRecordRelease
-      build-root-directory: love-actions-android/love-android
+      with:
+        arguments: assembleEmbedRecordRelease
+        build-root-directory: love-actions-android/love-android
     - name: Rename package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
