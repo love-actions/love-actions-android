@@ -236,7 +236,7 @@ runs:
       shell: bash
       run: |
         echo "${{ inputs.keystore-base64 }}" | base64 -d > ./love-actions-android/love-android/app/android.keystore
-    - use: burrunan/gradle-cache-action@v1
+    - uses: burrunan/gradle-cache-action@v1
       name: Build package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       with:
