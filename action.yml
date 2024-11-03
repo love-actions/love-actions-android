@@ -249,12 +249,15 @@ runs:
       uses: burrunan/gradle-cache-action@v2
       with:
         arguments: assembleEmbedRecordDebug
-        build-root-directory: ${{ github.workspace }}/${{ inputs.love-actions-folder }}/love-android
+        build-root-directory: ${{ inputs.love-actions-folder }}/love-android
+        concurrent: true
+        gradle-build-scan-report: false
 
     - name: Rename package (Debug)
       shell: bash
       run: |
         mv ${{ inputs.love-actions-folder }}/love-android/app/build/outputs/apk/embedRecord/debug/app-embed-record-debug.apk ${{ inputs.output-folder }}/${{ inputs.product-name }}-debug.apk
+
     - name: Pre build (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
@@ -266,7 +269,10 @@ runs:
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       with:
         arguments: assembleEmbedRecordRelease
-        build-root-directory: ${{ github.workspace }}/${{ inputs.love-actions-folder }}/love-android
+        build-root-directory: ${{ inputs.love-actions-folder }}/love-android
+        concurrent: true
+        execution-only-caches: true
+        gradle-build-scan-report: false
 
     - name: Rename package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
@@ -278,8 +284,3 @@ runs:
       shell: bash
       run: |
         echo "package-paths=$(ls -d ${{ inputs.output-folder }}/* | tr '\r\n' ' ')" >> $GITHUB_OUTPUT
-
-    - name: Cleanup
-      shell: bash
-      run: |
-        rm -rf ${{ inputs.love-actions-folder }}
