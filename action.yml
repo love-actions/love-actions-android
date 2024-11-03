@@ -30,13 +30,13 @@ inputs:
     default: "@drawable/love"
   love-ref:
     description: |
-      LÖVE git ref
+      love-android git ref
       Could be commit hash, tags or branch name
     required: false
     default: "11.4"
   love-patch:
     description: |
-      Git patch file path for the LÖVE repo
+      Git patch file path for the love-android repo
       The patch must start from `love-ref`
       You can use `git diff` to get the patch file
     required: false
@@ -237,7 +237,7 @@ runs:
           ./love-actions-android/love-android/.gradle
           ./love-actions-android/love-android/love/build
           ./love-actions-android/love-android/app/build
-        key: build-love-11.4
+        key: build-love-${{ inputs.love-ref }}
     - name: Build package (Debug)
       shell: bash
       run: |
