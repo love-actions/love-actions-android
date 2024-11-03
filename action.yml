@@ -238,13 +238,6 @@ runs:
         path: /usr/local/lib/android/sdk/ndk/21.3.6528147
         key: ndk-21.3.6528147
 
-    - name: List directories
-      shell: bash
-      run: |
-        ls -l
-        echo "----------------------------------------------------"
-        ls -l ${{ github.workspace }}
-
     - name: Build package (Debug)
       uses: burrunan/gradle-cache-action@v2
       with:
@@ -252,6 +245,7 @@ runs:
         build-root-directory: ${{ inputs.love-actions-folder }}/love-android
         concurrent: true
         gradle-build-scan-report: false
+        gradle-distribution-sha-256-sum-warning: false
 
     - name: Rename package (Debug)
       shell: bash
@@ -271,8 +265,9 @@ runs:
         arguments: assembleEmbedRecordRelease
         build-root-directory: ${{ inputs.love-actions-folder }}/love-android
         concurrent: true
-        execution-only-caches: true
         gradle-build-scan-report: false
+        gradle-distribution-sha-256-sum-warning: false
+        execution-only-caches: true
 
     - name: Rename package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
