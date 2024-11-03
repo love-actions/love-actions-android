@@ -232,6 +232,13 @@ runs:
         path: /usr/local/lib/android/sdk/ndk/21.3.6528147
         key: ndk-21.3.6528147
 
+    - name: List directories
+      shell: bash
+      run: |
+        ls -l
+        echo "----------------------------------------------------"
+        ls -l ${{ github.workspace }}
+
     - name: Build package (Debug)
       uses: burrunan/gradle-cache-action@v2
       with:
