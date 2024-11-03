@@ -33,7 +33,7 @@ See related actions below:
     bundle-id: "org.love2d.my_game"
     resource-path: "./assets/android/res"
     icon-specifier: "@mipmap/app"
-    love-ref: "0b0ff5551fae8b2079749481cd2b54adbbb25bd"
+    love-ref: "11.4"
     love-patch: "./love.patch"
     love-package: "./game.love"
     libs-path: "./assets/android/libs"

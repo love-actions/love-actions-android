@@ -30,13 +30,13 @@ inputs:
     default: "@drawable/love"
   love-ref:
     description: |
-      LÖVE git ref
+      love-android git ref
       Could be commit hash, tags or branch name
     required: false
     default: "11.4"
   love-patch:
     description: |
-      Git patch file path for the LÖVE repo
+      Git patch file path for the love-android repo
       The patch must start from `love-ref`
       You can use `git diff` to get the patch file
     required: false
@@ -125,11 +125,13 @@ runs:
       run: |
         mkdir -p ./love-actions-android/
         mkdir -p ${{ inputs.output-folder }}
+
     - name: Get Java
       uses: actions/setup-java@v4
       with:
         distribution: adopt
         java-version: "11"
+
     - name: Checkout love-android
       uses: actions/checkout@v4
       with:
@@ -137,6 +139,7 @@ runs:
         ref: ${{ inputs.love-ref }}
         repository: love2d/love-android
         submodules: recursive
+
     - name: Apply love-android patch
       if: "${{ inputs.love-patch != '' }}"
       shell: bash
@@ -144,25 +147,30 @@ runs:
         cp ${{ inputs.love-patch }} ./love-actions-android/love-android/love.patch
         cd ./love-actions-android/love-android
         git apply ./love.patch
+
     - name: Copy resources
       shell: bash
       run: |
         cp -r -f ${{ inputs.resource-path }}/* ./love-actions-android/love-android/app/src/main/res/
+
     - name: Extract love package
       shell: bash
       run: |
         7z x ${{ inputs.love-package }} -o./love-actions-android/love-android/app/src/embed/assets/
+
     - name: Add libs
       if: "${{ inputs.libs-path != '' }}"
       shell: bash
       run: |
         mkdir -p ./love-actions-android/love-android/app/libs/
         cp -r -f ${{ inputs.libs-path }}/* ./love-actions-android/love-android/app/libs/
+
     - name: Add extra assets
       if: "${{ inputs.extra-assets != '' }}"
       shell: bash
       run: |
         cp -r -f ${{ inputs.extra-assets }} ./love-actions-android/love-android/app/src/embed/assets/
+
     - name: Update android information
       shell: python
       run: |
@@ -217,16 +225,19 @@ runs:
           file.seek(0)
           file.truncate()
           file.write(data)
+
     - name: Cache NDK
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: /usr/local/lib/android/sdk/ndk/21.3.6528147
         key: ndk-21.3.6528147
-    - uses: burrunan/gradle-cache-action@v1
-      name: Build package (Debug)
+
+    - name: Build package (Debug)
+      uses: burrunan/gradle-cache-action@v2
       with:
         arguments: assembleEmbedRecordDebug
         build-root-directory: love-actions-android/love-android
+
     - name: Rename package (Debug)
       shell: bash
       run: |
@@ -236,21 +247,25 @@ runs:
       shell: bash
       run: |
         echo "${{ inputs.keystore-base64 }}" | base64 -d > ./love-actions-android/love-android/app/android.keystore
-    - uses: burrunan/gradle-cache-action@v1
-      name: Build package (Release)
+
+    - name: Build package (Release)
+      uses: burrunan/gradle-cache-action@v2
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       with:
         arguments: assembleEmbedRecordRelease
         build-root-directory: love-actions-android/love-android
+
     - name: Rename package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
       run: mv ./love-actions-android/love-android/app/build/outputs/apk/embedRecord/release/app-embed-record-release.apk ${{ inputs.output-folder }}/${{ inputs.product-name }}-release.apk
+
     - name: Gather packages in output folder
       id: gather-packages
       shell: bash
       run: |
         echo "package-paths=$(ls -d ${{ inputs.output-folder }}/* | tr '\r\n' ' ')" >> $GITHUB_OUTPUT
+
     - name: Cleanup
       shell: bash
       run: |
