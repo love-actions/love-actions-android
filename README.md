@@ -2,9 +2,9 @@
 
 ## Notice
 
-### This branch (Related to `v1` tag and `v1.x.x` tags) is for the `11.4` version of the [LÖVE](https://love2d.org/) framework.
+### This branch is for the `11.4` version of the [LÖVE](https://love2d.org/) framework.
 
-### For the `11.5` and newer version, please refer to the [**main**](https://github.com/love-actions/love-actions-android) branch.
+### For the latest release version, please refer to the [**main**](https://github.com/love-actions/love-actions-android) branch.
 
 ## About
 
