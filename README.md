@@ -1,5 +1,16 @@
 # love-actions-android
 
+## Which version to use?
+
+- For the `11.5` version of the [LÖVE](https://love2d.org/) framework, use the `v2` tag or `v2.x.x` tags.
+- For the `11.4` version of the [LÖVE](https://love2d.org/) framework, use the `v1` tag or `v1.x.x` tags.
+
+### Branches
+
+This branch is for the latest release version of the [LÖVE](https://love2d.org/) framework.
+
+For the `11.4` version, please refer to the [**11.4**](https://github.com/love-actions/love-actions-android/tree/11.4) branch.
+
 ## About
 
 Github Action for building & deploying Android `.apk` and `.abb` packages of a [LÖVE](https://love2d.org/) framework based game.
