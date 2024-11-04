@@ -2,9 +2,9 @@
 
 ## Notice
 
-#### This branch (Related to `v1` tag and `v1.x.x` tags) is for the `11.4` version of the [LÖVE](https://love2d.org/) framework.
+### This branch (Related to `v1` tag and `v1.x.x` tags) is for the `11.4` version of the [LÖVE](https://love2d.org/) framework.
 
-#### For the `11.5` and newer version, please refer to the [**main**](https://github.com/love-actions/love-actions-android) branch.
+### For the `11.5` and newer version, please refer to the [**main**](https://github.com/love-actions/love-actions-android) branch.
 
 ## About
 
@@ -17,20 +17,6 @@ See related actions below:
 [Love actions bare package](https://github.com/marketplace/actions/love-actions-bare-package)
 
 [Love actions for testing](https://github.com/marketplace/actions/love-actions-for-testing)
-
-### Other platforms
-
-If you need to build game for other platforms, please check links below:
-
-[Love actions for iOS](https://github.com/marketplace/actions/love-actions-for-ios)
-
-[Love actions for Linux](https://github.com/marketplace/actions/love-actions-for-linux)
-
-[Love actions for macOS portable](https://github.com/marketplace/actions/love-actions-for-macos-portable)
-
-[Love actions for macOS App Store](https://github.com/marketplace/actions/love-actions-for-macos-app-store)
-
-[Love actions for Windows](https://github.com/marketplace/actions/love-actions-for-windows)
 
 ## Quick example
 
@@ -152,7 +138,7 @@ jobs:
           path: ${{ env.OUTPUT_FOLDER }}/${{ env.PRODUCT_NAME }}-release.apk
 ```
 
-## All inputs
+## Inputs specification
 
 | Name                      | Required | Default                                      | Description                                                                                                                                          |
 | :------------------------ | -------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -175,8 +161,22 @@ jobs:
 | `keystore-store-password` | `false`  | `""`                                         | Signing keystore's store password. Won't build release packages if not specified                                                                     |
 | `love-actions-folder`     | `false`  | `"love-actions-android"`                     | Path to the `love-actions-android` folder. Would be used to checkout the love-actions-android and love-android repo                                  |
 
-## All outputs
+## Outputs specification
 
 | Name            | Example                                                 | Description                                                                                     |
 | :-------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `package-paths` | `./build/my-game-debug.apk ./build/my-game-release.apk` | Built packages' paths in a bash-style list relative to the repository root, separated by spaces |
+
+## Other platforms
+
+If you need to build game for other platforms, please check links below:
+
+[Love actions for iOS](https://github.com/marketplace/actions/love-actions-for-ios)
+
+[Love actions for Linux](https://github.com/marketplace/actions/love-actions-for-linux)
+
+[Love actions for macOS portable](https://github.com/marketplace/actions/love-actions-for-macos-portable)
+
+[Love actions for macOS App Store](https://github.com/marketplace/actions/love-actions-for-macos-app-store)
+
+[Love actions for Windows](https://github.com/marketplace/actions/love-actions-for-windows)
