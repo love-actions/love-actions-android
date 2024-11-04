@@ -1,5 +1,11 @@
 # love-actions-android
 
+## Notice
+
+#### This branch (Related to `v1` tag and `v1.x.x` tags) is for the `11.4` version of the [LÖVE](https://love2d.org/) framework.
+
+#### For the `11.5` and newer version, please refer to the [**main**](https://github.com/love-actions/love-actions-android) branch.
+
 ## About
 
 Github Action for building & deploying Android `.apk` and `.abb` packages of a [LÖVE](https://love2d.org/) framework based game.
@@ -11,6 +17,10 @@ See related actions below:
 [Love actions bare package](https://github.com/marketplace/actions/love-actions-bare-package)
 
 [Love actions for testing](https://github.com/marketplace/actions/love-actions-for-testing)
+
+### Other platforms
+
+If you need to build game for other platforms, please check links below:
 
 [Love actions for iOS](https://github.com/marketplace/actions/love-actions-for-ios)
 
