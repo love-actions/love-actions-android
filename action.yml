@@ -135,16 +135,16 @@ runs:
     - name: Get Java
       uses: actions/setup-java@v4
       with:
-        distribution: adopt
-        java-version: "11"
+        distribution: temurin
+        java-version: "17"
 
     - name: Checkout love-android
       uses: actions/checkout@v4
       with:
-        path: ${{ inputs.love-actions-folder }}/love-android
-        ref: ${{ inputs.love-ref }}
         repository: love2d/love-android
+        ref: ${{ inputs.love-ref }}
         submodules: recursive
+        path: ${{ inputs.love-actions-folder }}/love-android
 
     - name: Apply love-android patch
       if: "${{ inputs.love-patch != '' }}"
@@ -180,12 +180,26 @@ runs:
     - name: Update android information
       shell: python
       run: |
+        with open("${{ inputs.love-actions-folder }}/love-android/gradle.properties", "w", encoding="utf-8") as file:
+          data = (
+            f"app.name_byte_array={",".join(map(str, '${{ inputs.app-name }}'.encode()))}\n"
+            f"app.application_id=${{ inputs.bundle-id }}\n"
+            "app.orientation=landscape\n"
+            f"app.version_code=${{ inputs.version-code }}\n"
+            f"app.version_name=${{ inputs.version-string }}\n"
+            "android.enableJetifier=false\n"
+            "android.useAndroidX=true\n"
+            "android.defaults.buildfeatures.buildconfig=true\n"
+            "android.nonTransitiveRClass=true\n"
+            "android.nonFinalResIds=true\n"
+            "org.gradle.caching=true\n"
+          )
+          file.write(data)
         with open("${{ inputs.love-actions-folder }}/love-android/app/src/main/AndroidManifest.xml", "r+", encoding="utf-8") as file:
           data = file.read()
           data = data\
             .replace("OpenGL ES 2.0", "OpenGL ES 3.0")\
             .replace("0x00020000", "0x00030000")\
-            .replace("LÖVE for Android", "${{ inputs.app-name }}")\
             .replace("@drawable/love", "${{ inputs.icon-specifier }}")
           try:
             scheme = "${{ inputs.custom-scheme }}".split("://")[0]
@@ -205,10 +219,6 @@ runs:
           file.write(data)
         with open("${{ inputs.love-actions-folder }}/love-android/app/build.gradle", "r+", encoding="utf-8") as file:
           data = file.read()
-          data = data\
-            .replace("org.love2d.android", "${{ inputs.bundle-id }}")\
-            .replace("30", "${{ inputs.version-code }}")\
-            .replace("11.4", "${{ inputs.version-string }}")
           insert_pos = data.find("\n", data.find("proguardFiles")) + 1
           data = data[:insert_pos] + "            signingConfig signingConfigs.release\n" + data[insert_pos:]
           insert_pos = data.find("buildTypes") - 4
@@ -231,14 +241,12 @@ runs:
           file.seek(0)
           file.truncate()
           file.write(data)
-        with open('${{ inputs.love-actions-folder }}/love-android/app/gradle.properties', mode='a', encoding='utf-8') as file:
-          file.write('\norg.gradle.caching=true')
 
     - name: Cache NDK
       uses: actions/cache@v4
       with:
-        path: /usr/local/lib/android/sdk/ndk/21.3.6528147
-        key: ndk-21.3.6528147
+        path: /usr/local/lib/android/sdk/ndk/25.2.9519653
+        key: ndk-25.2.9519653
 
     - name: Build package (Debug)
       uses: burrunan/gradle-cache-action@v2
