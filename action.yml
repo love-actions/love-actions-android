@@ -180,29 +180,6 @@ runs:
     - name: Update android information
       shell: python
       run: |
-        with open("${{ inputs.love-actions-folder }}/love-android/app/src/main/AndroidManifest.xml", "r+", encoding="utf-8") as file:
-          data = file.read()
-          data = data\
-            .replace("OpenGL ES 2.0", "OpenGL ES 3.0")\
-            .replace("0x00020000", "0x00030000")\
-            .replace("LÖVE for Android", "${{ inputs.app-name }}")\
-            .replace("@drawable/love", "${{ inputs.icon-specifier }}")
-          try:
-            scheme = "${{ inputs.custom-scheme }}".split("://")[0]
-            host = "${{ inputs.custom-scheme }}".split("://")[1]
-            if scheme != "" and host != "":
-              data = data[:data.rfind("</intent-filter>") + 16] + '''
-                    <intent-filter>
-                      <action android:name="android.intent.action.VIEW" />
-                      <category android:name="android.intent.category.DEFAULT" />
-                      <category android:name="android.intent.category.BROWSABLE" />
-                      <data android:scheme="''' + scheme + '''" android:host="''' + host + '''" />
-                    </intent-filter>''' + data[data.rfind("</intent-filter>") + 16:]
-          except:
-            pass
-          file.seek(0)
-          file.truncate()
-          file.write(data)
         with open("${{ inputs.love-actions-folder }}/love-android/app/build.gradle", "r+", encoding="utf-8") as file:
           data = file.read()
           data = data\
@@ -231,7 +208,30 @@ runs:
           file.seek(0)
           file.truncate()
           file.write(data)
-        with open('${{ inputs.love-actions-folder }}/love-android/app/gradle.properties', mode='a', encoding='utf-8') as file:
+        with open("${{ inputs.love-actions-folder }}/love-android/app/src/main/AndroidManifest.xml", "r+", encoding="utf-8") as file:
+          data = file.read()
+          data = data\
+            .replace("OpenGL ES 2.0", "OpenGL ES 3.0")\
+            .replace("0x00020000", "0x00030000")\
+            .replace("LÖVE for Android", "${{ inputs.app-name }}")\
+            .replace("@drawable/love", "${{ inputs.icon-specifier }}")
+          try:
+            scheme = "${{ inputs.custom-scheme }}".split("://")[0]
+            host = "${{ inputs.custom-scheme }}".split("://")[1]
+            if scheme != "" and host != "":
+              data = data[:data.rfind("</intent-filter>") + 16] + '''
+                    <intent-filter>
+                      <action android:name="android.intent.action.VIEW" />
+                      <category android:name="android.intent.category.DEFAULT" />
+                      <category android:name="android.intent.category.BROWSABLE" />
+                      <data android:scheme="''' + scheme + '''" android:host="''' + host + '''" />
+                    </intent-filter>''' + data[data.rfind("</intent-filter>") + 16:]
+          except:
+            pass
+          file.seek(0)
+          file.truncate()
+          file.write(data)
+        with open('${{ inputs.love-actions-folder }}/love-android/gradle.properties', mode='a', encoding='utf-8') as file:
           file.write('\norg.gradle.caching=true')
 
     - name: Cache NDK
