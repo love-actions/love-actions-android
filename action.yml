@@ -228,7 +228,7 @@ runs:
           file.write(data)
         with open("${{ inputs.love-actions-folder }}/love-android/gradle.properties", "w", encoding="utf-8") as file:
           data = (
-            f"app.name_byte_array={",".join(map(str, '${{ inputs.app-name }}'.encode()))}\n"
+            f"app.name_byte_array={','.join(map(str, '${{ inputs.app-name }}'.encode()))}\n"
             f"app.application_id=${{ inputs.bundle-id }}\n"
             "app.orientation=landscape\n"
             f"app.version_code=${{ inputs.version-code }}\n"
