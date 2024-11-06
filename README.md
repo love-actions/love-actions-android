@@ -60,7 +60,7 @@ jobs:
     env:
       OUTPUT_FOLDER: ./build
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Build core love package
@@ -69,7 +69,7 @@ jobs:
           build-list: ./media/ ./parts/ ./Zframework/ ./conf.lua ./main.lua ./version.lua
           package-path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
       - name: Upload core love package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.CORE_LOVE_ARTIFACT_NAME }}
           path: ${{ env.CORE_LOVE_PACKAGE_PATH }}
@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-core
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Love actions for testing
@@ -91,12 +91,12 @@ jobs:
     env:
       OUTPUT_FOLDER: ./build
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       # Download your core love package here
       - name: Download core love package
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ env.CORE_LOVE_ARTIFACT_NAME }}
       # This is an example dynamic library
@@ -132,7 +132,7 @@ jobs:
           version-code: 100
           output-folder: ${{ env.OUTPUT_FOLDER }}
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ needs.get-info.outputs.base-name }}_Android_release
           path: ${{ env.OUTPUT_FOLDER }}/${{ env.PRODUCT_NAME }}-release.apk
@@ -140,26 +140,26 @@ jobs:
 
 ## Inputs specification
 
-| Name                      | Required | Default                                      | Description                                                                                                                                          |
-| :------------------------ | -------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `app-name`                | `false`  | `"LÖVE for Android"`                         | App display name. Used in `app/src/main/AndroidManifest.xml`                                                                                         |
-| `bundle-id`               | `false`  | `"org.love2d.android"`                       | App bundle id. Used in `app/build.gradle`                                                                                                            |
-| `resource-path`           | `true`   | `""`                                         | Path to the android resources folder. Would copy all contents to `app/src/main/res` excluding top folder                                             |
-| `icon-specifier`          | `false`  | `"@drawable/love"`                           | App icon specifier. Used in `app/src/main/AndroidManifest.xml`                                                                                       |
-| `love-ref`                | `false`  | `"11.4"`                                     | `love-android` git ref. Could be commit hash, tags or branch name                                                                                    |
-| `love-patch`              | `false`  | `""`                                         | Git patch file path for the `love-android` repo. The patch must start from `love-ref`. You can use `git diff -p <tag1> <tag2>` to get the patch file |
-| `love-package`            | `false`  | `"game.love"`                                | `.love` game package file path                                                                                                                       |
-| `libs-path`               | `false`  | `""`                                         | Path to the JNI libraries folder. Would copy all contents to `app/libs` excluding top folder                                                         |
-| `extra-assets`            | `false`  | `""`                                         | List of folder & file paths to be added to `app/src/embed/assets/`. Separated by spaces                                                              |
-| `product-name`            | `false`  | `"love-app"`                                 | Base name of the package. Used to rename products                                                                                                    |
-| `version-string`          | `false`  | `"0b0ff5551fae8b2079749481cd2b54adbbb25bd9"` | App version string no more than 3 numbers. Used in `app/build.gradle`                                                                                |
-| `version-code`            | `false`  | `"30"`                                       | Numeric app version code . Used in `app/build.gradle`                                                                                                |
-| `output-folder`           | `false`  | `"build"`                                    | Built packages output folder                                                                                                                         |
-| `keystore-alias`          | `false`  | `""`                                         | Signing keystore's alias. Won't build release packages if not specified                                                                              |
-| `keystore-base64`         | `false`  | `""`                                         | Signing keystore's content in `base64` string. Won't build release packages if not specified                                                         |
-| `keystore-key-password`   | `false`  | `""`                                         | Signing keystore's key password. Won't build release packages if not specified                                                                       |
-| `keystore-store-password` | `false`  | `""`                                         | Signing keystore's store password. Won't build release packages if not specified                                                                     |
-| `love-actions-folder`     | `false`  | `"love-actions-android"`                     | Path to the `love-actions-android` folder. Would be used to checkout the love-actions-android and love-android repo                                  |
+| Name                      | Required | Default                  | Description                                                                                                                                          |
+| :------------------------ | -------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `app-name`                | `false`  | `"LÖVE for Android"`     | App display name. Used in `app/src/main/AndroidManifest.xml`                                                                                         |
+| `bundle-id`               | `false`  | `"org.love2d.android"`   | App bundle id. Used in `app/build.gradle`                                                                                                            |
+| `resource-path`           | `true`   | `""`                     | Path to the android resources folder. Would copy all contents to `app/src/main/res` excluding top folder                                             |
+| `icon-specifier`          | `false`  | `"@drawable/love"`       | App icon specifier. Used in `app/src/main/AndroidManifest.xml`                                                                                       |
+| `love-ref`                | `false`  | `"11.4"`                 | `love-android` git ref. Could be commit hash, tags or branch name                                                                                    |
+| `love-patch`              | `false`  | `""`                     | Git patch file path for the `love-android` repo. The patch must start from `love-ref`. You can use `git diff -p <tag1> <tag2>` to get the patch file |
+| `love-package`            | `false`  | `"game.love"`            | `.love` game package file path                                                                                                                       |
+| `libs-path`               | `false`  | `""`                     | Path to the JNI libraries folder. Would copy all contents to `app/libs` excluding top folder                                                         |
+| `extra-assets`            | `false`  | `""`                     | List of folder & file paths to be added to `app/src/embed/assets/`. Separated by spaces                                                              |
+| `product-name`            | `false`  | `"love-app"`             | Base name of the package. Used to rename products                                                                                                    |
+| `version-string`          | `false`  | `"11.4"`                 | App version string. Used in `app/build.gradle`                                                                                                       |
+| `version-code`            | `false`  | `"30"`                   | Numeric app version code . Used in `app/build.gradle`                                                                                                |
+| `output-folder`           | `false`  | `"build"`                | Built packages output folder                                                                                                                         |
+| `keystore-alias`          | `false`  | `""`                     | Signing keystore's alias. Won't build release packages if not specified                                                                              |
+| `keystore-base64`         | `false`  | `""`                     | Signing keystore's content in `base64` string. Won't build release packages if not specified                                                         |
+| `keystore-key-password`   | `false`  | `""`                     | Signing keystore's key password. Won't build release packages if not specified                                                                       |
+| `keystore-store-password` | `false`  | `""`                     | Signing keystore's store password. Won't build release packages if not specified                                                                     |
+| `love-actions-folder`     | `false`  | `"love-actions-android"` | Path to the `love-actions-android` folder. Would be used to checkout the love-actions-android and love-android repo                                  |
 
 ## Outputs specification
 
