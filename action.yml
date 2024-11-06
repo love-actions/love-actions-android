@@ -33,7 +33,7 @@ inputs:
       love-android git ref
       Could be commit hash, tags or branch name
     required: false
-    default: "11.4"
+    default: "11.5"
   love-patch:
     description: |
       Git patch file path for the love-android repo
