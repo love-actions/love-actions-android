@@ -131,13 +131,11 @@ runs:
       run: |
         mkdir -p ${{ inputs.love-actions-folder }}
         mkdir -p ${{ inputs.output-folder }}
-
     - name: Get Java
       uses: actions/setup-java@v4
       with:
         distribution: temurin
         java-version: "17"
-
     - name: Checkout love-android
       uses: actions/checkout@v4
       with:
@@ -145,7 +143,6 @@ runs:
         ref: ${{ inputs.love-ref }}
         submodules: recursive
         path: ${{ inputs.love-actions-folder }}/love-android
-
     - name: Apply love-android patch
       if: "${{ inputs.love-patch != '' }}"
       shell: bash
@@ -153,30 +150,25 @@ runs:
         cp ${{ inputs.love-patch }} ${{ inputs.love-actions-folder }}/love-android/love.patch
         cd ${{ inputs.love-actions-folder }}/love-android
         git apply ./love.patch
-
     - name: Copy resources
       shell: bash
       run: |
         cp -r -f ${{ inputs.resource-path }}/* ${{ inputs.love-actions-folder }}/love-android/app/src/main/res/
-
     - name: Extract love package
       shell: bash
       run: |
         7z x ${{ inputs.love-package }} -o${{ inputs.love-actions-folder }}/love-android/app/src/embed/assets/
-
     - name: Add libs
       if: "${{ inputs.libs-path != '' }}"
       shell: bash
       run: |
         mkdir -p ${{ inputs.love-actions-folder }}/love-android/app/libs/
         cp -r -f ${{ inputs.libs-path }}/* ${{ inputs.love-actions-folder }}/love-android/app/libs/
-
     - name: Add extra assets
       if: "${{ inputs.extra-assets != '' }}"
       shell: bash
       run: |
         cp -r -f ${{ inputs.extra-assets }} ${{ inputs.love-actions-folder }}/love-android/app/src/embed/assets/
-
     - name: Update android information
       shell: python
       run: |
@@ -241,13 +233,11 @@ runs:
             "org.gradle.caching=true\n"
           )
           file.write(data)
-
     - name: Cache NDK
       uses: actions/cache@v4
       with:
         path: /usr/local/lib/android/sdk/ndk/25.2.9519653
         key: ndk-25.2.9519653
-
     - name: Build package (Debug)
       uses: burrunan/gradle-cache-action@v2
       with:
@@ -256,18 +246,15 @@ runs:
         concurrent: true
         gradle-build-scan-report: false
         gradle-distribution-sha-256-sum-warning: false
-
     - name: Rename package (Debug)
       shell: bash
       run: |
         mv ${{ inputs.love-actions-folder }}/love-android/app/build/outputs/apk/embedRecord/debug/app-embed-record-debug.apk ${{ inputs.output-folder }}/${{ inputs.product-name }}-debug.apk
-
     - name: Pre build (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
       run: |
         echo "${{ inputs.keystore-base64 }}" | base64 -d > ${{ inputs.love-actions-folder }}/love-android/app/android.keystore
-
     - name: Build package (Release)
       uses: burrunan/gradle-cache-action@v2
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
@@ -278,12 +265,10 @@ runs:
         gradle-build-scan-report: false
         gradle-distribution-sha-256-sum-warning: false
         execution-only-caches: true
-
     - name: Rename package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
       run: mv ${{ inputs.love-actions-folder }}/love-android/app/build/outputs/apk/embedRecord/release/app-embed-record-release.apk ${{ inputs.output-folder }}/${{ inputs.product-name }}-release.apk
-
     - name: Gather packages in output folder
       id: gather-packages
       shell: bash
