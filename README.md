@@ -167,6 +167,7 @@ jobs:
 | `love-patch`              | `false`  | `""`                     | Git patch file path for the `love-android` repo. The patch must start from `love-ref`. You can use `git diff -p <tag1> <tag2>` to get the patch file |
 | `love-package`            | `false`  | `"game.love"`            | `.love` game package file path                                                                                                                       |
 | `libs-path`               | `false`  | `""`                     | Path to the JNI libraries folder. Would copy all contents to `app/libs` excluding top folder                                                         |
+| `needs-microphone`        | `false`  | `"true"`                 | Keep the `RECORD_AUDIO` permission by default. Set to `"false"` to omit it from debug and release APKs.                                                |
 | `extra-assets`            | `false`  | `""`                     | List of folder & file paths to be added to `app/src/embed/assets/`. Separated by spaces                                                              |
 | `product-name`            | `false`  | `"love-app"`             | Base name of the package. Used to rename products                                                                                                    |
 | `version-string`          | `false`  | `"11.5a"`                | App version string. Used in `app/build.gradle`                                                                                                       |

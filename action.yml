@@ -52,6 +52,10 @@ inputs:
       Would copy all contents to app/libs
       Top folder not included
     required: false
+  needs-microphone:
+    description: Set to "false" to build APKs without the microphone permission.
+    required: false
+    default: "true"
   extra-assets:
     description: |
       List of folder & file paths to be added to app/src/embed/assets/
@@ -242,14 +246,29 @@ runs:
       with:
         path: /usr/local/lib/android/sdk/ndk/25.2.9519653
         key: ndk-25.2.9519653
+    - name: Select APK flavor
+      id: apk-flavor
+      shell: bash
+      working-directory: ${{ inputs.love-actions-folder }}/love-android
+      env:
+        RECORDING_FLAVOR: ${{ inputs.needs-microphone == 'false' && 'noRecord' || 'record' }}
+      run: |
+        # LÖVE 11.5 uses a lowercase directory for its noRecord manifest.
+        if [[ "$RECORDING_FLAVOR" == noRecord && -f app/src/norecord/AndroidManifest.xml && ! -e app/src/noRecord/AndroidManifest.xml ]]; then
+          mkdir -p app/src/noRecord
+          cp app/src/norecord/AndroidManifest.xml app/src/noRecord/AndroidManifest.xml
+        fi
+        printf 'task-prefix=assembleEmbed%s\n' "${RECORDING_FLAVOR^}" >> "$GITHUB_OUTPUT"
+        printf 'directory=embed%s\n' "${RECORDING_FLAVOR^}" >> "$GITHUB_OUTPUT"
+        printf 'filename-prefix=app-embed-%s\n' "$RECORDING_FLAVOR" >> "$GITHUB_OUTPUT"
     - name: Build package (Debug)
       shell: bash
       working-directory: ${{ inputs.love-actions-folder }}/love-android
-      run: ./gradlew assembleEmbedRecordDebug --no-daemon --build-cache
+      run: ./gradlew ${{ steps.apk-flavor.outputs.task-prefix }}Debug --no-daemon --build-cache
     - name: Rename package (Debug)
       shell: bash
       run: |
-        mv ${{ inputs.love-actions-folder }}/love-android/app/build/outputs/apk/embedRecord/debug/app-embed-record-debug.apk ${{ inputs.output-folder }}/${{ inputs.product-name }}-debug.apk
+        mv "${{ inputs.love-actions-folder }}/love-android/app/build/outputs/apk/${{ steps.apk-flavor.outputs.directory }}/debug/${{ steps.apk-flavor.outputs.filename-prefix }}-debug.apk" "${{ inputs.output-folder }}/${{ inputs.product-name }}-debug.apk"
     - name: Pre build (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
@@ -259,11 +278,11 @@ runs:
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
       working-directory: ${{ inputs.love-actions-folder }}/love-android
-      run: ./gradlew assembleEmbedRecordRelease --no-daemon --build-cache
+      run: ./gradlew ${{ steps.apk-flavor.outputs.task-prefix }}Release --no-daemon --build-cache
     - name: Rename package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
-      run: mv ${{ inputs.love-actions-folder }}/love-android/app/build/outputs/apk/embedRecord/release/app-embed-record-release.apk ${{ inputs.output-folder }}/${{ inputs.product-name }}-release.apk
+      run: mv "${{ inputs.love-actions-folder }}/love-android/app/build/outputs/apk/${{ steps.apk-flavor.outputs.directory }}/release/${{ steps.apk-flavor.outputs.filename-prefix }}-release.apk" "${{ inputs.output-folder }}/${{ inputs.product-name }}-release.apk"
     - name: Gather packages in output folder
       id: gather-packages
       shell: bash
