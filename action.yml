@@ -131,13 +131,8 @@ runs:
       run: |
         mkdir -p ${{ inputs.love-actions-folder }}
         mkdir -p ${{ inputs.output-folder }}
-    - name: Get Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: temurin
-        java-version: "17"
     - name: Checkout love-android
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: love2d/love-android
         ref: ${{ inputs.love-ref }}
@@ -150,6 +145,15 @@ runs:
         cp ${{ inputs.love-patch }} ${{ inputs.love-actions-folder }}/love-android/love.patch
         cd ${{ inputs.love-actions-folder }}/love-android
         git apply ./love.patch
+    - name: Set up Java and cache Gradle
+      uses: actions/setup-java@v5
+      with:
+        distribution: temurin
+        java-version: "17"
+        cache: gradle
+        cache-dependency-path: |
+          ${{ inputs.love-actions-folder }}/love-android/**/*.gradle*
+          ${{ inputs.love-actions-folder }}/love-android/**/gradle-wrapper.properties
     - name: Copy resources
       shell: bash
       run: |
@@ -234,18 +238,14 @@ runs:
           )
           file.write(data)
     - name: Cache NDK
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: /usr/local/lib/android/sdk/ndk/25.2.9519653
         key: ndk-25.2.9519653
     - name: Build package (Debug)
-      uses: burrunan/gradle-cache-action@v2
-      with:
-        arguments: assembleEmbedRecordDebug
-        build-root-directory: ${{ inputs.love-actions-folder }}/love-android
-        concurrent: true
-        gradle-build-scan-report: false
-        gradle-distribution-sha-256-sum-warning: false
+      shell: bash
+      working-directory: ${{ inputs.love-actions-folder }}/love-android
+      run: ./gradlew assembleEmbedRecordDebug --no-daemon --build-cache
     - name: Rename package (Debug)
       shell: bash
       run: |
@@ -256,15 +256,10 @@ runs:
       run: |
         echo "${{ inputs.keystore-base64 }}" | base64 -d > ${{ inputs.love-actions-folder }}/love-android/app/android.keystore
     - name: Build package (Release)
-      uses: burrunan/gradle-cache-action@v2
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
-      with:
-        arguments: assembleEmbedRecordRelease
-        build-root-directory: ${{ inputs.love-actions-folder }}/love-android
-        concurrent: true
-        gradle-build-scan-report: false
-        gradle-distribution-sha-256-sum-warning: false
-        execution-only-caches: true
+      shell: bash
+      working-directory: ${{ inputs.love-actions-folder }}/love-android
+      run: ./gradlew assembleEmbedRecordRelease --no-daemon --build-cache
     - name: Rename package (Release)
       if: "${{ inputs.keystore-alias != '' && inputs.keystore-base64 != '' && inputs.keystore-key-password != '' && inputs.keystore-store-password != '' }}"
       shell: bash
