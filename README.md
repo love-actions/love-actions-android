@@ -5,6 +5,8 @@
 - For the `11.5` version of the [LÖVE](https://love2d.org/) framework, use the `v2` tag or `v2.x.x` tags.
 - For the `11.4` version of the [LÖVE](https://love2d.org/) framework, use the `v1` tag or `v1.x.x` tags.
 
+Node 24-based releases require Actions Runner `2.327.1` or newer. Update self-hosted runners before upgrading.
+
 ### Branches
 
 This branch is for the latest release version of the [LÖVE](https://love2d.org/) framework.

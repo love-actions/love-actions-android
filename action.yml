@@ -136,8 +136,6 @@ runs:
       with:
         distribution: temurin
         java-version: "17"
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v6
     - name: Checkout love-android
       uses: actions/checkout@v7
       with:
@@ -152,6 +150,10 @@ runs:
         cp ${{ inputs.love-patch }} ${{ inputs.love-actions-folder }}/love-android/love.patch
         cd ${{ inputs.love-actions-folder }}/love-android
         git apply ./love.patch
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v6
+      with:
+        cache-provider: basic
     - name: Copy resources
       shell: bash
       run: |
