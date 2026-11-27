@@ -131,11 +131,6 @@ runs:
       run: |
         mkdir -p ${{ inputs.love-actions-folder }}
         mkdir -p ${{ inputs.output-folder }}
-    - name: Get Java
-      uses: actions/setup-java@v5
-      with:
-        distribution: temurin
-        java-version: "17"
     - name: Checkout love-android
       uses: actions/checkout@v7
       with:
@@ -150,10 +145,15 @@ runs:
         cp ${{ inputs.love-patch }} ${{ inputs.love-actions-folder }}/love-android/love.patch
         cd ${{ inputs.love-actions-folder }}/love-android
         git apply ./love.patch
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v6
+    - name: Set up Java and cache Gradle
+      uses: actions/setup-java@v5
       with:
-        cache-provider: basic
+        distribution: temurin
+        java-version: "17"
+        cache: gradle
+        cache-dependency-path: |
+          ${{ inputs.love-actions-folder }}/love-android/**/*.gradle*
+          ${{ inputs.love-actions-folder }}/love-android/**/gradle-wrapper.properties
     - name: Copy resources
       shell: bash
       run: |
